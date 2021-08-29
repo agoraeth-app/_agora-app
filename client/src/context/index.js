@@ -8,36 +8,21 @@ export const AppContext = React.createContext();
 const ContextProvider = (props) => {
   const [contextState, setContextState] = useState({
     web3: "",
-    accounts: "",
+    userAccounts: { address: "", balance: "" },
     contract: "",
   });
 
   const initWeb3 = async () => {
     try {
       // Get network provider and web3 instance.
-      const web3 = window.addEventListener("load", async () => {
-        if (window.ethereum) {
-          const web3 = new Web3(window.ethereum);
-          // Request account access if needed
-          await window.ethereum.enable();
-          // Accounts now exposed
-        }
-        // Legacy dapp browsers...
-        else if (window.web3) {
-          // Use Mist/MetaMask's provider.
-          const web3 = window.web3;
-        }
-        // Fallback to localhost; use dev console port by default...
-        else {
-          const provider = new Web3.providers.HttpProvider(
-            "http://127.0.0.1:8545"
-          );
-          const web3 = new Web3(provider);
-        }
-      });
+      const web3 = await new Web3(window.ethereum);
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
+
+      // Return users' wallet balance and store it parsed.
+      const balance = await web3.eth.getBalance(accounts[0]);
+      const parsedBalance = await web3.utils.fromWei(balance, "ether");
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
@@ -48,7 +33,38 @@ const ContextProvider = (props) => {
       );
 
       // Set web3, accounts, and contract to the app context
-      setContextState({ web3, accounts, contract: instance });
+      setContextState({
+        web3,
+        userAccounts: { address: accounts[0], balance: parsedBalance },
+        contract: instance,
+      });
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `Failed to load web3, accounts, or contract. Check console for details.`
+      );
+      console.error(error);
+    }
+  };
+
+  const refreshWeb3 = async () => {
+    try {
+      // Get network provider and web3 instance.
+      const web3 = await new Web3(window.ethereum);
+
+      // Use web3 to get the user's accounts.
+      const accounts = await web3.eth.getAccounts();
+
+      // Return users' wallet balance and store it parsed.
+      const balance = await web3.eth.getBalance(accounts[0]);
+      const parsedBalance = await web3.utils.fromWei(balance, "ether");
+
+      // Set web3, accounts, and contract to the app context
+      setContextState({
+        ...contextState,
+        web3,
+        userAccounts: { address: accounts[0], balance: parsedBalance },
+      });
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -63,6 +79,7 @@ const ContextProvider = (props) => {
       <AppContext.Provider
         value={{
           initWeb3,
+          refreshWeb3,
           contextState,
         }}
       >

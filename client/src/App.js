@@ -1,31 +1,50 @@
-import React, { useEffect } from "react";
-// import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import React, { useEffect, useState } from "react";
+
+import Modal from "./components/Modal/Modal";
+import AppHeader from "./components/AppHeader/AppHeader";
 
 import "./App.css";
 
 import { AppContext } from "./context/index";
 
 const App = () => {
-  useEffect(() => {});
+  const [appState, setAppState] = useState({
+    modalVisibility: false,
+    newAccount: "",
+  });
 
+  useEffect(() => {
+    window.ethereum.on("accountsChanged", (newAccounts) => {
+      setAppState({ modalVisibility: true, newAccount: newAccounts[0] });
+    });
+  });
+
+  const { newAccount } = appState;
   return (
     <AppContext.Consumer>
       {(context) => {
-        const { web3 } = context.contextState;
+        const { initWeb3 } = context;
+        const { modalVisibility } = appState;
+        const { web3, userAccounts } = context.contextState;
         return (
-          <div className="App">
-            <h1>Good to Go!</h1>
-            <p>Your Truffle Box is installed and ready.</p>
-            <h2>Smart Contract Example</h2>
-            <p>
-              If your contracts compiled and migrated successfully, below will
-              show a stored value of 5 (by default).
-            </p>
-            <p>
-              Try changing the value stored on <strong>line 42</strong> of
-              App.js.
-            </p>
-            <div>The stored value is: {web3}</div>
+          <div className="App h-screen bg-indigo-900">
+            <AppHeader
+              web3={web3}
+              startWeb3={initWeb3}
+              userAccount={userAccounts}
+            />
+            {modalVisibility ? (
+              <Modal modalVisibility={modalVisibility}>
+                <p>
+                  We've noticed that you've changed accounts. Can you please
+                  confirm which account you'd like to use?
+                </p>
+                <p1>{newAccount}</p1>
+                <p1>{userAccounts.address}</p1>
+              </Modal>
+            ) : (
+              ""
+            )}
           </div>
         );
       }}
