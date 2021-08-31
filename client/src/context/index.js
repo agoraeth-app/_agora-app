@@ -16,13 +16,14 @@ const ContextProvider = (props) => {
     try {
       // Get network provider and web3 instance.
       const web3 = await new Web3(window.ethereum);
-
+      // console.log(web)
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-
+      console.log(accounts)
       // Return users' wallet balance and store it parsed.
       const balance = await web3.eth.getBalance(accounts[0]);
       const parsedBalance = await web3.utils.fromWei(balance, "ether");
+      // console.log(parsedBalance)
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();

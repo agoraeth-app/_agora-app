@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.8.0",
+    "postcss": "^8.3.6",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-scripts": "3.1.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "web3": "1.2.2"
   },
   "scripts": {
