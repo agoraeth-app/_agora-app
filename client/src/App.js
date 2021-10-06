@@ -23,7 +23,7 @@ const App = () => {
   return (
     <AppContext.Consumer>
       {(context) => {
-        const { initWeb3 } = context;
+        const { initWeb3, initWeb3QR } = context;
         const { modalVisibility } = appState;
         const { web3, userAccounts } = context.contextState;
         return (
@@ -31,6 +31,7 @@ const App = () => {
             <AppHeader
               web3={web3}
               startWeb3={initWeb3}
+              startWeb3QR={initWeb3QR}
               userAccount={userAccounts}
             />
             {modalVisibility ? (

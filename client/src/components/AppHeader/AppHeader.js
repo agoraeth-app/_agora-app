@@ -3,7 +3,7 @@ import React from "react";
 import shortenUserWalletAddress from "../../utils/shortenUserWalletAddress";
 
 const AppHeader = (props) => {
-  const { web3, startWeb3, userAccount } = props;
+  const { web3, startWeb3, startWeb3QR, userAccount } = props;
   return (
     <>
       <header className="w-full flex flex-row justify-between">
@@ -21,6 +21,12 @@ const AppHeader = (props) => {
               onClick={() => startWeb3()}
             >
               Connect wallet
+            </button>
+            <button
+              className="p-2 m-4 rounded-2xl bg-green-500"
+              onClick={() => startWeb3QR()}
+            >
+              Connect wallet with QR code
             </button>
           </>
         )}
